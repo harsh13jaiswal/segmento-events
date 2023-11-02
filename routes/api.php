@@ -31,3 +31,5 @@ Route::delete('/event/{id}', [EventsTypesController::class, 'destroy']);
 Route::post('/logevent/{eventTypeId}', [EventLogController::class, 'create']);
 // Route::get('/logevent/{baseId}', [EventLogController::class, 'show']);
 Route::post('/logevent/filter/{baseId}', [EventLogController::class, 'filter']);
+
+Route::post('/test/product/{baseId}')
