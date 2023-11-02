@@ -16,7 +16,7 @@ class EventsTypesController extends Controller
      */
     public function index(EventService $es)
     {
-        $result=$es->getEvents(1,null);
+        $result=$es->getEvents(1332,null);
         return new CustomResource((array) $result);
 
     }
@@ -43,7 +43,7 @@ class EventsTypesController extends Controller
      */
     public function show($id,EventService $es)
     {   
-        $result=$es->getEvents(null,$id);
+        $result=$es->getEvents(1332,$id);
         return new CustomResource((array) $result);
     }
 

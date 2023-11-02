@@ -3,6 +3,8 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventsTypesController;
+use App\Http\Controllers\EventLogController;
+use App\Http\Controllers\EventLogsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,3 +27,7 @@ Route::get('/event', [EventsTypesController::class, 'index']);
 Route::get('/event/{id}', [EventsTypesController::class, 'show']);
 Route::patch('/event/{id}', [EventsTypesController::class, 'update']);
 Route::delete('/event/{id}', [EventsTypesController::class, 'destroy']);
+
+Route::post('/logevent/{eventTypeId}', [EventLogController::class, 'create']);
+// Route::get('/logevent/{baseId}', [EventLogController::class, 'show']);
+Route::post('/logevent/filter/{baseId}', [EventLogController::class, 'filter']);

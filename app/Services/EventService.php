@@ -49,12 +49,45 @@ class EventService{
         }
         return "Event Deleted";
     }
-    public function runQuery($query){
+
+    public function CreateEventLog($input) {
+        $identifier = $input['identifier'];
+        $base_id = $input['base_id'];
+        $user_id = $input['user_id'];
+        $event_identifier = $input['event_identifier'];
+        $type = $input['type'];
+        $created_at = $input['created_at'];
+        $context = $input['context'];
+        $page = $input['page'];
+        $event_timestamp = $input['event_timestamp'];
+        $event_properties = $input['event_properties'];
+        $table="via-socket-prod.segmento.user_events";
+
+        if(!empty($input['anonymous_id'])){
+            $table="via-socket-prod.segmento.anonymous_events";
+            $anonymous_id=$input['anonymous_id'];
+            $query = "INSERT INTO `$table`
+            ( `base_id`, `anonymous_id`, `event_identifier`, `type`, `created_at`, `context`, `page`, `event_timestamp`, `event_properties`) 
+            VALUES 
+            ( '$base_id', '$anonymous_id', '$event_identifier', '$type', TIMESTAMP '$created_at', JSON '$context', JSON '$page', TIMESTAMP '$event_timestamp', JSON '$event_properties')";
+
+        }else{
+            $query = "INSERT INTO `$table`
+                (`identifier`, `base_id`, `user_id`, `event_identifier`, `type`, `created_at`, `context`, `page`, `event_timestamp`, `event_properties`) 
+                VALUES 
+                ('$identifier', '$base_id', '$user_id', '$event_identifier', '$type', TIMESTAMP '$created_at', JSON '$context', JSON '$page', TIMESTAMP '$event_timestamp', JSON '$event_properties')";
+            
+        }
+        
         $this->lib->runQuery($query);
     }
 
+    public function filterEvents($baseId,$query){
+        return $this->lib->runQuery($query);
+    }
 
-
-
+    public function runQuery($query){
+        $this->lib->runQuery($query);
+    }
 
 }
