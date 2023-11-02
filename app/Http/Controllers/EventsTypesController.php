@@ -44,7 +44,8 @@ class EventsTypesController extends Controller
      */
     public function show($id,EventService $es)
     {   
-        $result=$es->getEvents(1332,$id);
+        $base_id= $request->input('base_id');
+        $result=$es->getEvents($base_id,$id);
         return new CustomResource((array) $result);
     }
 
