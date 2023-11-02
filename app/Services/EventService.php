@@ -6,6 +6,7 @@ use App\Libs\BigqueryLib;
 use Exception;
 
 class EventService{
+    protected $lib;
     public function __construct(BigqueryLib $lib) {
         $this->lib = $lib;
     }
@@ -26,10 +27,6 @@ class EventService{
         $this->lib->runQuery($query);
     }
 
-    public function UpdateEvent($input){
-
-    }
-
     public function getEvents($base_id,$id=null){
 
         $query="select * from via-socket-prod.segmento.event_types where base_id='$base_id'";
@@ -40,7 +37,7 @@ class EventService{
     }
 
     public function deleteEvents($companyId,$id){
-        $query="DELETE FROM via-socket-prod.segmento.event_types
+        $query="delete from via-socket-prod.segmento.event_types
         WHERE company_id = '$companyId' AND identifier ='$id'";
         try{
             $this->lib->runQuery($query);

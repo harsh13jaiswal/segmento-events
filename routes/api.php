@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventsTypesController;
 use App\Http\Controllers\EventLogController;
 use App\Http\Controllers\EventLogsController;
+use App\Http\Controllers\productCatalogController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +30,8 @@ Route::patch('/event/{id}', [EventsTypesController::class, 'update']);
 Route::delete('/event/{id}', [EventsTypesController::class, 'destroy']);
 
 Route::post('/logevent/{eventTypeId}', [EventLogController::class, 'create']);
-// Route::get('/logevent/{baseId}', [EventLogController::class, 'show']);
 Route::post('/logevent/filter/{baseId}', [EventLogController::class, 'filter']);
 
-Route::post('/test/product/{baseId}')
+Route::post('/productcatalog/{baseId}', [productCatalogController::class, 'create']);
+Route::get('/productcatalog/{productId}', [productCatalogController::class, 'index']);
+
