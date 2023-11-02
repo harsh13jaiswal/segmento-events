@@ -92,7 +92,6 @@ class EventLogController extends Controller
     public function filter($baseId,filterEventLogRequest $request,EventService $es){
         $input=$request->validated();
         $result=$es->filterEvents($baseId,$input['query']);
-
         return new CustomResource((array) $result);
     }
 }

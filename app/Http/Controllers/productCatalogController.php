@@ -14,9 +14,9 @@ class productCatalogController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($productId,ProductCatalogService $ps)
-    {   
-        $baseId="1332";
+    public function index( $request,$productId,ProductCatalogService $ps)
+    {   dd($request);
+        $baseId=$request->input('base_id');
         $result=$ps->getProductCatalog($baseId,request()->productId);
         return new CustomResource((array) $result);
     }
@@ -29,7 +29,6 @@ class productCatalogController extends Controller
     public function create(AddProductCatalogRequest $request ,ProductCatalogService $ps)
     {   
         $input=$request->validated();
-
         $ps->addProductToCatalogue($input);
         return 'Product Added';
     }

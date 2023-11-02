@@ -32,7 +32,7 @@ class ProductCatalogService {
 
     function getProductCatalog($baseId,$productId=null){
         if(empty($productId)) {
-            $query = "SELECT * FROM `via-socket-prod.segmento.product_catalogue` WHERE base_id='$baseId' LIMIT 1000;";
+            $query = "SELECT * FROM `via-socket-prod.segmento.product_catalogue` WHERE base_id='$baseId' LIMIT 100;";
         } else {
             $query = "SELECT * FROM `via-socket-prod.segmento.product_catalogue` WHERE product_id='$productId' AND base_id='$baseId';";
         }
