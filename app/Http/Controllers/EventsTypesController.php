@@ -31,7 +31,7 @@ class EventsTypesController extends Controller
     {
         $input=$request->validated();
         $es->createEvent($input);
-        return "Event created";
+        return "Event created"; 
     }
 
 
