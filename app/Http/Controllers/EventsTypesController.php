@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\CreateEventTypeRequest;
 use App\Http\Requests\UpdateEventTypeRequest;
 use App\Services\EventService;
+use App\Http\Resources\CustomResource;
 class EventsTypesController extends Controller
 {
     /**
@@ -15,9 +16,9 @@ class EventsTypesController extends Controller
      */
     public function index(EventService $es)
     {
-        $result=$es->getEvents(null,1);
-        dd($result);
-        return $result;
+        $result=$es->getEvents(1,null);
+        return new CustomResource((array) $result);
+
     }
 
     /**
@@ -41,10 +42,9 @@ class EventsTypesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($id,EventService $es)
-    {
-        $result=$es->getEvents($id,1);
-        dd($result);
-        return $result;
+    {   
+        $result=$es->getEvents(null,$id);
+        return new CustomResource((array) $result);
     }
 
     /**
@@ -67,8 +67,7 @@ class EventsTypesController extends Controller
      */
     public function destroy($id,EventService $es)
     {
-        
         $result=$es->deleteEvents(1,$id);
-        dd($result);
+        return new CustomResource((array) [$result]);
     }
 }

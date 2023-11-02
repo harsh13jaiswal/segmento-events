@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Libs\BigqueryLib;
+use Exception;
 
 class EventService{
     public function __construct(BigqueryLib $lib) {
@@ -11,19 +12,17 @@ class EventService{
 
     public function createEvent($input){
         $identifier = $input['identifier'];
-        $company_id = $input['company_id'];
+        $base_id = $input['base_id'];
         $type = $input['type'];
-        $event_type = $input['event_type'];
+        $event_name = $input['event_name'];
         $created_at =  date('Y-m-d H:i:s');
         // $updated_at = $input['updated_at'];
         // $updated_by = $input['updated_by'];
         $event_properties = $input['event_properties'];
-
-        $query = "INSERT INTO `via-socket-prod.segmento.event_types`
-        (identifier, company_id, type, event_type, created_at, event_properties)
+        $query = "INSERT INTO `via-socket-prod`.`segmento`.`event_types`
+        (`identifier`, `base_id`, `type`, `event_name`, `created_at`, `event_properties`)
         VALUES
-        ('$identifier', '$company_id', '$type', '$event_type', TIMESTAMP('$created_at'), JSON'$event_properties')";
-
+        ('$identifier', '$base_id', '$type', '$event_name', TIMESTAMP '$created_at', JSON'$event_properties')";
         $this->lib->runQuery($query);
     }
 
@@ -31,9 +30,9 @@ class EventService{
 
     }
 
-    public function getEvents($companyId,$id=null){
+    public function getEvents($base_id,$id=null){
 
-        $query="select * from via-socket-prod.segmento.event_types where company_id='1'";
+        $query="select * from via-socket-prod.segmento.event_types where base_id='$base_id'";
         if($id){
             $query.="and identifier='$id'";
         }
@@ -43,8 +42,12 @@ class EventService{
     public function deleteEvents($companyId,$id){
         $query="DELETE FROM via-socket-prod.segmento.event_types
         WHERE company_id = '$companyId' AND identifier ='$id'";
-
-        return $this->lib->runQuery($query);
+        try{
+            $this->lib->runQuery($query);
+        }catch(Exception $e){
+            return ['something went wrong'];
+        }
+        return "Event Deleted";
     }
     public function runQuery($query){
         $this->lib->runQuery($query);
