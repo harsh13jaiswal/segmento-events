@@ -15,11 +15,11 @@ class EventsTypesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(EventService $es)
+    public function index(Request $request, EventService $es )
     {
-        $result=$es->getEvents(1332,null);
+        $base_id= $request->input('base_id');
+        $result=$es->getEvents($base_id,null);
         return new CustomResource((array) $result);
-
     }
 
     /**

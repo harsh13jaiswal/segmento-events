@@ -26,6 +26,7 @@ class EventLogController extends Controller
      */
     public function create(CreateEventLogRequest $request,EventService $es)
     {   
+        dd($request);
         $input=$request->validated();
         $es->CreateEventLog($input);
         return 'Event Created';
