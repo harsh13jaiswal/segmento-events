@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Requests;
-
+use Illuminate\Support\Str;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateEventRequest extends FormRequest
@@ -43,10 +43,10 @@ class CreateEventRequest extends FormRequest
 
         $input['event_identifier']=request()->eventTypeId;
         if(empty($input['user_id'])){
-            $input['anonymous_id']=substr(\Str::uuid()->toString(), -10);
+            $input['anonymous_id']=substr(Str::uuid()->toString(), -10);
         };
         $input['base_id']=1332;
-        $input['identifier']=substr(\Str::uuid()->toString(), -10);
+        $input['identifier']=substr(Str::uuid()->toString(), -10);
         $input['created_at']=date('Y-m-d H:i:s');
         $input['event_properties']=json_encode($input['event_properties']);
         $input['context']=json_encode($input['context']);

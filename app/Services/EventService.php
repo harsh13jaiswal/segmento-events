@@ -7,18 +7,33 @@ use Exception;
 use App\Services\EventTypeService;
 
 class EventService{
-    protected $lib;
-    protected $est;
-    public function __construct(BigqueryLib $lib,EventTypeService $est) {
-        $this->lib = $lib;
-        $this->est = $est;
+    protected $bigQueryLib;
+    protected $eventTypeService;
+    public function __construct(BigqueryLib $bigQueryLib,EventTypeService $eventTypeService) {
+        $this->bigQueryLib = $bigQueryLib;
+        $this->eventTypeService = $eventTypeService;
     }
 
-    public function filterEvents($baseId,$query){
-        return $this->lib->runQuery($query);
+    public function getEvents($base_id,$id=null){
+        $query="SELECT * FROM via-socket-prod.segmento.event_types WHERE BASE_ID='$base_id' ";
+        if($id){
+            $query.=" AND identifier='$id'";
+        }
+        return $this->bigQueryLib->runQueryOnDB($query);
     }
 
-    public function createEventLog($input) {
+    public function deleteEvents($baseId,$id){
+        $query="DELETE FROM via-socket-prod.segmento.event_types
+        WHERE BASE_ID = '$baseId' AND identifier ='$id'";
+        try{
+            $this->bigQueryLib->runQueryOnDB($query);
+        }catch(Exception $e){
+            return ['something went wrong'];
+        }
+        return "Event Deleted";
+    }
+
+    public function createEvent($input) {
         $identifier = $input['identifier'];
         $base_id = $input['base_id'];
         $user_id = $input['user_id'];
@@ -33,8 +48,10 @@ class EventService{
         $table="via-socket-prod.segmento.user_events";
 
 
-        $this->est->searchEventType($base_id,$type,$identifier,$event_name);
-
+        $result=$this->eventTypeService->checkEventTypeExistence($base_id,$type,$identifier,$event_name);
+        if(!$result){
+            $this->eventTypeService->createEventType($input);
+        }
 
         if(!empty($input['anonymous_id'])){
             $table="via-socket-prod.segmento.anonymous_events";
@@ -51,10 +68,11 @@ class EventService{
                 ('$identifier', '$base_id', '$user_id', '$event_name', '$type', TIMESTAMP '$created_at', JSON '$context', JSON '$page', TIMESTAMP '$event_timestamp', JSON '$event_properties')";
             
         }
-        $this->lib->runQuery($query);
+        $this->bigQueryLib->runQueryOnDB($query);
     }
 
-    public function runQuery($query){
-        $this->lib->runQuery($query);
+    public function filterEvents($baseId,$query){
+        return $this->bigQueryLib->runQueryOnDB($query);
     }
+
 }

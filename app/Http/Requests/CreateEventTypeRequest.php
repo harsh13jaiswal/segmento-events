@@ -35,7 +35,6 @@ class CreateEventTypeRequest extends FormRequest
     {
 
         $input=parent::validated();
-        $input['identifier']=substr(\Str::uuid()->toString(), -10);
         $input['created_at']=strtotime('now');
         $input['event_properties']=json_encode($input['event_properties']);
         $input['company_id']="1";
