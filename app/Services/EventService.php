@@ -14,25 +14,6 @@ class EventService{
         $this->eventTypeService = $eventTypeService;
     }
 
-    public function createEvent($input){
-        
-        $identifier = $input['identifier'];
-        $base_id = $input['base_id'];
-        $type = $input['type'];
-        $event_name = $input['event_name'];
-        $created_at =  date('Y-m-d H:i:s');
-        // $updated_at = $input['updated_at'];
-        // $updated_by = $input['updated_by'];
-        $event_properties = $input['event_properties'];
-
-
-        $query = "INSERT INTO `via-socket-prod.segmento.event_types`
-        (identifier, company_id, TYPE, event_type, created_at, event_properties)
-        VALUES
-        ('$identifier', '$base_id', '$type', '$event_name', TIMESTAMP '$created_at', JSON'$event_properties')";
-        $this->bigQueryLib->runQueryOnDB($query);
-    }
-
     public function getEvents($base_id,$id=null){
         $query="SELECT * FROM via-socket-prod.segmento.event_types WHERE BASE_ID='$base_id' ";
         if($id){
@@ -52,7 +33,7 @@ class EventService{
         return "Event Deleted";
     }
 
-    public function createEventLog($input) {
+    public function createEvent($input) {
         $identifier = $input['identifier'];
         $base_id = $input['base_id'];
         $user_id = $input['user_id'];
