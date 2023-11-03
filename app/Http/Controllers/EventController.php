@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use App\Services\EventService;
 use App\Http\Resources\CustomResource;
 
-
 class EventController extends Controller
 {
     /**
@@ -29,8 +28,7 @@ class EventController extends Controller
     public function create(CreateEventRequest $request,EventService $es)
     {
         $input=$request->validated();
-        $es->CreateEventLog($input);
-        dd("dataset");
+        $es->createEventLog($input);
         return 'Event Created';
     }
 
@@ -91,9 +89,8 @@ class EventController extends Controller
     }
 
 
-    public function filter(FilterEventRequest $request , EventService $es){
+    public function filter($baseId,FilterEventRequest $request , EventService $es){
         $input=$request->validated();
-
         $result=$es->filterEvents($baseId,$input['query']);
         return new CustomResource((array) $result);
     }

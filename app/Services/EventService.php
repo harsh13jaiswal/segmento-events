@@ -24,7 +24,7 @@ class EventService{
         // $updated_at = $input['updated_at'];
         // $updated_by = $input['updated_by'];
         $event_properties = $input['event_properties'];
-        dd("heelo");
+
 
         $query = "INSERT INTO `via-socket-prod.segmento.event_types`
         (identifier, company_id, TYPE, event_type, created_at, event_properties)
@@ -52,7 +52,7 @@ class EventService{
         return "Event Deleted";
     }
 
-    public function CreateEventLog($input) {
+    public function createEventLog($input) {
         $identifier = $input['identifier'];
         $base_id = $input['base_id'];
         $user_id = $input['user_id'];
@@ -67,7 +67,7 @@ class EventService{
         $table="via-socket-prod.segmento.user_events";
 
 
-        $here=$this->est->searchEventType($base_id,$type,$event_identifier,$event_name);
+        $this->est->searchEventType($base_id,$type,$identifier,$event_name);
 
 
         if(!empty($input['anonymous_id'])){
@@ -86,7 +86,6 @@ class EventService{
             
         }
         $this->lib->runQuery($query);
-        dd($query);
     }
 
     public function filterEvents($baseId,$query){

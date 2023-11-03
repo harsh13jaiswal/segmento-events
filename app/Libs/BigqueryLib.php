@@ -27,10 +27,8 @@ class BigqueryLib{
             "universe_domain"=> "googleapis.com"
         ];
         
-        // var_dump(["keyFile" => $credentials, "projectId" => "via-socket-prod"]);
         $this->client = new BigQueryClient(["keyFile" => $credentials, "projectId" => "via-socket-prod"]);
 
-        // dd("big query");
     }
     
 
@@ -38,7 +36,7 @@ class BigqueryLib{
         $query = "SELECT * FROM via-socket-prod.segmento.event_types";
         $queryJobConfig = $this->client->query($query);
         $queryResults = $this->client->runQuery($queryJobConfig);
-dd("here query",$queryResults);
+
         $results = []; // Initialize an empty array for storing results
 
         if ($queryResults->isComplete()) {

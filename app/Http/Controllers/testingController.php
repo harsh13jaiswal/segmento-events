@@ -24,12 +24,6 @@ class testingController extends Controller
             "client_x509_cert_url"=> "https://www.googleapis.com/robot/v1/metadata/x509/big-query%40via-socket-prod.iam.gserviceaccount.com",
             "universe_domain"=> "googleapis.com"
         ];
-        
-        // var_dump(["keyFile" => $credentials, "projectId" => "via-socket-prod"]);
         $testRun = new BigQueryClient(["keyFile" => $credentials, "projectId" => "via-socket-prod"]);
-        var_dump("first");
-        $testRun = new BigQueryClient(["keyFile" => $credentials, "projectId" => "via-socket-prod"]);
-        var_dump("second");
-        // dd("big query");
     }
 }
