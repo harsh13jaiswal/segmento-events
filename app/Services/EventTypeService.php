@@ -57,7 +57,7 @@ class EventTypeService
     
     public function checkEventTypeExistence($base_id, $type, $event_identifier, $event_name)
     {
-        $query = "SELECT EXISTS (SELECT 1 FROM via-socket-prod.`segmento.event_types` WHERE BASE_ID='$base_id' AND TYPE='$type' AND EVENT_NAME='$event_name') AS event_exists;";
+        $query = "SELECT EXISTS (SELECT 1 FROM via-socket-prod.`segmento.event_types` WHERE BASE_ID='$base_id' AND EVENT_NAME='$event_name') AS event_exists;";
         $response = $this->bigQueryLib->runQueryOnDB($query);
         $eventExists = $response[0]['event_exists'];
         return $eventExists;
