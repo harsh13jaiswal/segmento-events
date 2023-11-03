@@ -42,7 +42,7 @@ class EventsTypesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id,EventService $es)
+    public function show($id, Request $request,EventService $es)
     {   
         $base_id= $request->input('base_id');
         $result=$es->getEvents($base_id,$id);
