@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateEventLogRequest extends FormRequest
+class CreateEventRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,7 +29,7 @@ class CreateEventLogRequest extends FormRequest
             'context' =>'required|array',
             'page'=>'required|array',
             'user_id'=>'nullable|string',
-            'event_name'=>"required|string",
+            'event_name'=>"nullable|string",
             'event_timestamp'=>"required|string",
         ];
        
@@ -37,10 +37,11 @@ class CreateEventLogRequest extends FormRequest
 
     }
 
-    
     public function validated($key = null, $default = null)
     {   
         $input=parent::validated();
+
+        $input['event_identifier']=request()->eventTypeId;
         if(empty($input['user_id'])){
             $input['anonymous_id']=substr(\Str::uuid()->toString(), -10);
         };

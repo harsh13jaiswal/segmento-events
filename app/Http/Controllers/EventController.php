@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CreateEventLogRequest;
-use App\Http\Requests\filterEventLogRequest;
+use App\Http\Requests\CreateEventRequest;
+use App\Http\Requests\FilterEventRequest;
 use Illuminate\Http\Request;
 use App\Services\EventService;
 use App\Http\Resources\CustomResource;
 use Exception;
-class EventLogController extends Controller
+class EventController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,7 +17,7 @@ class EventLogController extends Controller
      */
     public function index()
     {
-        
+        //
     }
 
     /**
@@ -25,11 +25,10 @@ class EventLogController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(CreateEventLogRequest $request,EventService $es)
-    {   
-
+    public function create(CreateEventRequest $request,EventService $es)
+    {
         $input=$request->validated();
-        $es->CreateEventLog($input);
+        $es->createEventLog($input);
         return 'Event Created';
     }
 
@@ -86,11 +85,11 @@ class EventLogController extends Controller
      */
     public function destroy($id)
     {
-        //
+
     }
 
 
-    public function filter($baseId,filterEventLogRequest $request,EventService $es){
+    public function filter($baseId,FilterEventRequest $request , EventService $es){
         $input=$request->validated();
         $result=$es->filterEvents($baseId,$input['query']);
         return new CustomResource((array) $result);

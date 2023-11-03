@@ -4,14 +4,18 @@ namespace App\Services;
 
 use App\Libs\BigqueryLib;
 use Exception;
+use App\Services\EventTypeService;
 
 class EventService{
     protected $lib;
-    public function __construct(BigqueryLib $lib) {
+    protected $est;
+    public function __construct(BigqueryLib $lib,EventTypeService $est) {
         $this->lib = $lib;
+        $this->est = $est;
     }
 
     public function createEvent($input){
+        
         $identifier = $input['identifier'];
         $base_id = $input['base_id'];
         $type = $input['type'];
@@ -20,25 +24,26 @@ class EventService{
         // $updated_at = $input['updated_at'];
         // $updated_by = $input['updated_by'];
         $event_properties = $input['event_properties'];
-        $query = "INSERT INTO `via-socket-prod`.`segmento`.`event_types`
-        (`identifier`, `base_id`, `type`, `event_name`, `created_at`, `event_properties`)
+
+
+        $query = "INSERT INTO `via-socket-prod.segmento.event_types`
+        (identifier, company_id, TYPE, event_type, created_at, event_properties)
         VALUES
         ('$identifier', '$base_id', '$type', '$event_name', TIMESTAMP '$created_at', JSON'$event_properties')";
         $this->lib->runQuery($query);
     }
 
     public function getEvents($base_id,$id=null){
-
-        $query="select * from via-socket-prod.segmento.event_types where base_id='$base_id'";
+        $query="SELECT * FROM via-socket-prod.segmento.event_types WHERE BASE_ID='$base_id' ";
         if($id){
-            $query.="and identifier='$id'";
+            $query.=" AND identifier='$id'";
         }
         return $this->lib->runQuery($query);
     }
 
     public function deleteEvents($baseId,$id){
         $query="DELETE FROM via-socket-prod.segmento.event_types
-        WHERE base_id = '$baseId' AND identifier ='$id'";
+        WHERE BASE_ID = '$baseId' AND identifier ='$id'";
         try{
             $this->lib->runQuery($query);
         }catch(Exception $e){
@@ -47,7 +52,7 @@ class EventService{
         return "Event Deleted";
     }
 
-    public function CreateEventLog($input) {
+    public function createEventLog($input) {
         $identifier = $input['identifier'];
         $base_id = $input['base_id'];
         $user_id = $input['user_id'];
@@ -57,8 +62,13 @@ class EventService{
         $context = $input['context'];
         $page = $input['page'];
         $event_timestamp = $input['event_timestamp'];
+        $event_name = $input['event_name'];
         $event_properties = $input['event_properties'];
         $table="via-socket-prod.segmento.user_events";
+
+
+        $this->est->searchEventType($base_id,$type,$identifier,$event_name);
+
 
         if(!empty($input['anonymous_id'])){
             $table="via-socket-prod.segmento.anonymous_events";
@@ -82,8 +92,8 @@ class EventService{
         return $this->lib->runQuery($query);
     }
 
+
     public function runQuery($query){
         $this->lib->runQuery($query);
     }
-
 }

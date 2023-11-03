@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class filterEventLogRequest extends FormRequest
+class FilterEventRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -34,6 +34,5 @@ class filterEventLogRequest extends FormRequest
        
         return $input;  
     }
-
 
 }
