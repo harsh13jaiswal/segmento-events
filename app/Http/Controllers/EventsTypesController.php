@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\CreateEventTypeRequest;
 use App\Http\Requests\UpdateEventTypeRequest;
-use App\Services\EventService;
 use App\Services\EventTypeService;
 
 use App\Http\Resources\CustomResource;
@@ -71,7 +70,7 @@ class EventsTypesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request,EventTypeService $ets)
+    public function destroy($id,Request $request,EventTypeService $ets)
     {   
         $baseId=$request->baseId;
         $id=$request->id;
