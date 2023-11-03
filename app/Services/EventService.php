@@ -20,8 +20,9 @@ class EventService{
         // $updated_at = $input['updated_at'];
         // $updated_by = $input['updated_by'];
         $event_properties = $input['event_properties'];
-        $query = "INSERT INTO `via-socket-prod`.`segmento`.`event_types`
-        (`identifier`, `base_id`, `type`, `event_name`, `created_at`, `event_properties`)
+
+        $query = "INSERT INTO `via-socket-prod.segmento.event_types`
+        (identifier, company_id, TYPE, event_type, created_at, event_properties)
         VALUES
         ('$identifier', '$base_id', '$type', '$event_name', TIMESTAMP '$created_at', JSON'$event_properties')";
         $this->lib->runQuery($query);
@@ -31,7 +32,7 @@ class EventService{
 
         $query="select * from via-socket-prod.segmento.event_types where base_id='$base_id'";
         if($id){
-            $query.="and identifier='$id'";
+            $query.="AND IDENTIFIER='$id'";
         }
         return $this->lib->runQuery($query);
     }
@@ -86,5 +87,4 @@ class EventService{
     public function runQuery($query){
         $this->lib->runQuery($query);
     }
-
 }
