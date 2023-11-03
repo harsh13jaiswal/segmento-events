@@ -38,7 +38,6 @@ class BigqueryLib{
         if ($queryResults->isComplete()) {
             // Get the rows from the result
             $rows = $queryResults->rows();
-            dd($rows);
             // Process each row
             foreach ($rows as $row) {
                 $resultRow = [];

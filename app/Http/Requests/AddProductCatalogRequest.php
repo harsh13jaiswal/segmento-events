@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateEventTypeRequest extends FormRequest
+class AddProductCatalogRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,24 +23,21 @@ class CreateEventTypeRequest extends FormRequest
      */
     public function rules()
     {
+        // $updated_at = $input['updated_at'];
         return [
-            'event_name' =>'required|string',
-            'type'=>'required|string|in:track,identify,page',
-            'event_properties' =>'required|array'
+            'product_details'=>'required|array',
+            'product_id'=>'required|string'
         ];
     }
 
     public function validated($key = null, $default = null)
-    {
-
+    {   
         $input=parent::validated();
-        $input['base_id']=1332;
+
         $input['identifier']=substr(\Str::uuid()->toString(), -10);
-        $input['created_at']=strtotime('now');
-        $input['event_properties']=json_encode($input['event_properties']);
-        $input['company_id']="1";
-        return $input;
+        $input['base_id']=request()->baseId;
+        $input['created_at']=date('Y-m-d H:i:s');
+        $input['product_details']=json_encode($input['product_details']);
+        return $input;  
     }
-
-
 }

@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateEventTypeRequest extends FormRequest
+class filterEventLogRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,22 +24,15 @@ class CreateEventTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'event_name' =>'required|string',
-            'type'=>'required|string|in:track,identify,page',
-            'event_properties' =>'required|array'
+            'query'=>'required|string'
         ];
     }
 
     public function validated($key = null, $default = null)
-    {
-
+    {   
         $input=parent::validated();
-        $input['base_id']=1332;
-        $input['identifier']=substr(\Str::uuid()->toString(), -10);
-        $input['created_at']=strtotime('now');
-        $input['event_properties']=json_encode($input['event_properties']);
-        $input['company_id']="1";
-        return $input;
+       
+        return $input;  
     }
 
 
