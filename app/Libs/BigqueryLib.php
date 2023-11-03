@@ -11,7 +11,6 @@ class BigqueryLib{
     protected $dataset;
     protected $client;
     public function __construct() {
-        var_dump("test");
         $credentials=Storage::get('key/auth.json');
         $credentials=[
             "type"=> "service_account",
@@ -33,7 +32,6 @@ class BigqueryLib{
     
 
     public function runQuery($query){
-        $query = "SELECT * FROM via-socket-prod.segmento.event_types";
         $queryJobConfig = $this->client->query($query);
         $queryResults = $this->client->runQuery($queryJobConfig);
 

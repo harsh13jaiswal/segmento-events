@@ -29,7 +29,6 @@ class CreateEventRequest extends FormRequest
             'context' =>'required|array',
             'page'=>'required|array',
             'user_id'=>'nullable|string',
-            'event_identifier'=>"required|string",
             'event_name'=>"nullable|string",
             'event_timestamp'=>"required|string",
         ];

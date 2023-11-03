@@ -7,7 +7,7 @@ use App\Http\Requests\FilterEventRequest;
 use Illuminate\Http\Request;
 use App\Services\EventService;
 use App\Http\Resources\CustomResource;
-
+use Exception;
 class EventController extends Controller
 {
     /**
