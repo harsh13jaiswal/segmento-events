@@ -31,12 +31,11 @@ class BigqueryLib{
     }
     
 
-    public function runQuery($query){
+    public function runQueryOnDB($query){
         $queryJobConfig = $this->client->query($query);
         $queryResults = $this->client->runQuery($queryJobConfig);
 
         $results = []; // Initialize an empty array for storing results
-
         if ($queryResults->isComplete()) {
             // Get the rows from the result
             $rows = $queryResults->rows();
@@ -52,7 +51,7 @@ class BigqueryLib{
                 $results[] = $resultRow;
             }
         } else {
-           return null;
+           return "Error in runQueryOnDB()";
         }
         return $results;
 

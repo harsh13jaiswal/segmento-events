@@ -6,10 +6,10 @@ use App\Libs\BigqueryLib;
 use Exception;
 use Symfony\Component\CssSelector\Node\FunctionNode;
 
-class ProductCatalogService {
-
-    public function __construct(BigqueryLib $lib) {
-        $this->lib = $lib;
+class ProductCatalogService{
+    protected $bigQueryLib;
+    public function __construct(BigqueryLib $bigQueryLib) {
+        $this->bigQueryLib = $bigQueryLib;
     }
 
     function addProductToCatalogue($input)
@@ -20,14 +20,13 @@ class ProductCatalogService {
         $product_id = $input['product_id'];
         $created_at = $input['created_at'];
         $product_details = $input['product_details'];
-    
-    
+
         // Prepare and execute the SQL query
         $query = "INSERT INTO `via-socket-prod.segmento.product_catalogue` 
                 (`identifier`, `base_id`, `product_id`, `created_at`, `product_details`) 
                 VALUES 
                 ('$identifier', '$base_id', '$product_id', TIMESTAMP'$created_at', JSON'$product_details')";
-        $this->lib->runQuery($query);
+        $this->bigQueryLib->runQueryOnDB($query);
     }
 
     function getProductCatalog($baseId,$productId=null){
@@ -37,6 +36,6 @@ class ProductCatalogService {
             $query = "SELECT * FROM `via-socket-prod.segmento.product_catalogue` WHERE product_id='$productId' AND base_id='$baseId';";
         }
         
-        return $this->lib->runQuery($query);
+        return $this->bigQueryLib->runQueryOnDB($query);
     }
 }

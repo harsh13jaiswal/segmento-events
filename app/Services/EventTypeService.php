@@ -4,30 +4,31 @@ namespace App\Services;
 
 use App\Libs\BigqueryLib;
 use Exception;
+use Illuminate\Support\Str;
 
-class EventTypeService{
-    protected $lib;
-    public function __construct(BigqueryLib $lib) {
-        $this->lib = $lib;
+class EventTypeService
+{
+    protected $bigQueryLib;
+    public function __construct(BigqueryLib $bigQueryLib)
+    {
+        $this->bigQueryLib = $bigQueryLib;
     }
 
     public function createEventType($input){
-        
-        $identifier = $input['identifier'];
+        $identifier=substr(Str::uuid()->toString(), -10);
         $base_id = $input['base_id'];
         $type = $input['type'];
         $event_name = $input['event_name'];
         $created_at =  date('Y-m-d H:i:s');
+        $event_properties = $input['event_properties'];
         // $updated_at = $input['updated_at'];
         // $updated_by = $input['updated_by'];
-        $event_properties = $input['event_properties'];
-
-
+        
         $query = "INSERT INTO `via-socket-prod.segmento.event_types`
-        (identifier, company_id, TYPE, event_type, created_at, event_properties)
+        (identifier, base_id, TYPE, event_name, created_at, event_properties)
         VALUES
         ('$identifier', '$base_id', '$type', '$event_name', TIMESTAMP '$created_at', JSON'$event_properties')";
-        $this->lib->runQuery($query);
+        $this->bigQueryLib->runQueryOnDB($query);
     }
 
     public function getEventTypes($base_id,$id=null){
@@ -35,14 +36,14 @@ class EventTypeService{
         if($id){
             $query.=" AND identifier='$id'";
         }
-        return $this->lib->runQuery($query);
+        return $this->bigQueryLib->runQueryOnDB($query);
     }
 
     public function deleteEventType($baseId,$id){
         $query="DELETE FROM via-socket-prod.segmento.event_types
         WHERE BASE_ID = '$baseId' AND identifier ='$id'";
         try{
-            $this->lib->runQuery($query);
+            $this->bigQueryLib->runQueryOnDB($query);
         }catch(Exception $e){
             return ['something went wrong'];
         }
@@ -52,5 +53,13 @@ class EventTypeService{
     public function searchEventType($base_id,$type,$event_identifier,$event_name){
         $query = "SELECT * FROM via-socket-prod.segmento.event_type WHERE TYPE='$type' AND EVENT_NAME='$event_name";
         return "New event Type Created";
+    }
+    
+    public function checkEventTypeExistence($base_id, $type, $event_identifier, $event_name)
+    {
+        $query = "SELECT EXISTS (SELECT 1 FROM via-socket-prod.`segmento.event_types` WHERE BASE_ID='$base_id' AND TYPE='$type' AND EVENT_NAME='$event_name') AS event_exists;";
+        $response = $this->bigQueryLib->runQueryOnDB($query);
+        $eventExists = $response[0]['event_exists'];
+        return $eventExists;
     }
 }
