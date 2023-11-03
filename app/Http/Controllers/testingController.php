@@ -1,19 +1,17 @@
 <?php
 
-namespace App\Libs;
-
-use Google\Cloud\BigQuery\BigQueryClient;
+namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\Response;
+use Google\Cloud\BigQuery\BigQueryClient;
 
-class BigqueryLib{
-    protected $table;
-    protected $dataset;
-    protected $client;
-    public function __construct() {
-        var_dump("test");
-        $credentials=Storage::get('key/auth.json');
-        $credentials=[
+use Illuminate\Http\Request;
+
+class testingController extends Controller
+{
+    public function index(){
+        
+            $credentials=Storage::get('key/auth.json');
+            $credentials=[
             "type"=> "service_account",
             "project_id"=> "via-socket-prod",
             "private_key_id"=> "46b0e0fc558e35db7c069acee6b05b0d224e1fd9",
@@ -28,38 +26,10 @@ class BigqueryLib{
         ];
         
         // var_dump(["keyFile" => $credentials, "projectId" => "via-socket-prod"]);
-        $this->client = new BigQueryClient(["keyFile" => $credentials, "projectId" => "via-socket-prod"]);
-
+        $testRun = new BigQueryClient(["keyFile" => $credentials, "projectId" => "via-socket-prod"]);
+        var_dump("first");
+        $testRun = new BigQueryClient(["keyFile" => $credentials, "projectId" => "via-socket-prod"]);
+        var_dump("second");
         // dd("big query");
     }
-    
-
-    public function runQuery($query){
-        $query = "SELECT * FROM via-socket-prod.segmento.event_types";
-        $queryJobConfig = $this->client->query($query);
-        $queryResults = $this->client->runQuery($queryJobConfig);
-dd("here query",$queryResults);
-        $results = []; // Initialize an empty array for storing results
-
-        if ($queryResults->isComplete()) {
-            // Get the rows from the result
-            $rows = $queryResults->rows();
-            // Process each row
-            foreach ($rows as $row) {
-                $resultRow = [];
-                // Access each field in the row
-                foreach ($row as $field => $value) {
-                    // Store the field and value in the current row
-                    $resultRow[$field] = $value;
-                }
-                // Store the current row in the results array
-                $results[] = $resultRow;
-            }
-        } else {
-           return null;
-        }
-        return $results;
-
-    }
-
 }

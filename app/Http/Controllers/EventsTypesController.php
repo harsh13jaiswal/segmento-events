@@ -30,8 +30,11 @@ class EventsTypesController extends Controller
     public function create(CreateEventTypeRequest $request,EventService $es)
     {
         $input=$request->validated();
+        
+
+
         $es->createEvent($input);
-        return "Event created"; 
+        return "Event Type created"; 
     }
 
 

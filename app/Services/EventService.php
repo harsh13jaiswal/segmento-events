@@ -4,14 +4,18 @@ namespace App\Services;
 
 use App\Libs\BigqueryLib;
 use Exception;
+use App\Services\EventTypeService;
 
 class EventService{
     protected $lib;
-    public function __construct(BigqueryLib $lib) {
+    protected $est;
+    public function __construct(BigqueryLib $lib,EventTypeService $est) {
         $this->lib = $lib;
+        $this->est = $est;
     }
 
     public function createEvent($input){
+        
         $identifier = $input['identifier'];
         $base_id = $input['base_id'];
         $type = $input['type'];
@@ -20,6 +24,7 @@ class EventService{
         // $updated_at = $input['updated_at'];
         // $updated_by = $input['updated_by'];
         $event_properties = $input['event_properties'];
+        dd("heelo");
 
         $query = "INSERT INTO `via-socket-prod.segmento.event_types`
         (identifier, company_id, TYPE, event_type, created_at, event_properties)
@@ -57,8 +62,13 @@ class EventService{
         $context = $input['context'];
         $page = $input['page'];
         $event_timestamp = $input['event_timestamp'];
+        $event_name = $input['event_name'];
         $event_properties = $input['event_properties'];
         $table="via-socket-prod.segmento.user_events";
+
+
+        $here=$this->est->searchEventType($base_id,$type,$event_identifier,$event_name);
+
 
         if(!empty($input['anonymous_id'])){
             $table="via-socket-prod.segmento.anonymous_events";
@@ -77,11 +87,13 @@ class EventService{
         }
         
         $this->lib->runQuery($query);
+        dd($query);
     }
 
     public function filterEvents($baseId,$query){
         return $this->lib->runQuery($query);
     }
+
 
     public function runQuery($query){
         $this->lib->runQuery($query);
