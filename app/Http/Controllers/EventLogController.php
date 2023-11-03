@@ -7,8 +7,8 @@ use App\Http\Requests\filterEventLogRequest;
 use Illuminate\Http\Request;
 use App\Services\EventService;
 use App\Http\Resources\CustomResource;
-
-class EventController extends Controller
+use Exception;
+class EventLogController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -26,8 +26,8 @@ class EventController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(CreateEventLogRequest $request,EventService $es)
-    {  
-        
+    {   
+
         $input=$request->validated();
         $es->CreateEventLog($input);
         return 'Event Created';

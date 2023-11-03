@@ -26,7 +26,8 @@ class CreateEventTypeRequest extends FormRequest
         return [
             'event_name' =>'required|string',
             'type'=>'required|string|in:track,identify,page',
-            'event_properties' =>'required|array'
+            'event_properties' =>'required|array',
+            'base_id'=>'required|string'
         ];
     }
 
@@ -34,7 +35,6 @@ class CreateEventTypeRequest extends FormRequest
     {
 
         $input=parent::validated();
-        $input['base_id']=1332;
         $input['identifier']=substr(\Str::uuid()->toString(), -10);
         $input['created_at']=strtotime('now');
         $input['event_properties']=json_encode($input['event_properties']);

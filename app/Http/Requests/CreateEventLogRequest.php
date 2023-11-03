@@ -29,7 +29,7 @@ class CreateEventLogRequest extends FormRequest
             'context' =>'required|array',
             'page'=>'required|array',
             'user_id'=>'nullable|string',
-            'event_identifier'=>"required|string",
+            'event_name'=>"required|string",
             'event_timestamp'=>"required|string",
         ];
        
@@ -44,7 +44,6 @@ class CreateEventLogRequest extends FormRequest
         if(empty($input['user_id'])){
             $input['anonymous_id']=substr(\Str::uuid()->toString(), -10);
         };
-        $input['event_identifier']=request()->eventTypeId;
         $input['base_id']=1332;
         $input['identifier']=substr(\Str::uuid()->toString(), -10);
         $input['created_at']=date('Y-m-d H:i:s');
