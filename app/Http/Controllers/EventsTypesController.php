@@ -70,7 +70,7 @@ class EventsTypesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id,Request $request,EventTypeService $ets)
+    public function destroy(Request $request,EventTypeService $ets)
     {   
         $baseId=$request->baseId;
         $id=$request->id;
