@@ -6,7 +6,7 @@ use App\Http\Requests\AddProductCatalogRequest;
 use App\Services\ProductCatalogService;
 use Illuminate\Http\Request;
 use App\Http\Resources\CustomResource;
-
+use Exception;
 class productCatalogController extends Controller
 {
     /**
@@ -14,7 +14,7 @@ class productCatalogController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index( $request,$productId,ProductCatalogService $ps)
+    public function index($request,$productId,ProductCatalogService $ps)
     {   
         $baseId=$request->input('base_id');
         $result=$ps->getProductCatalog($baseId,request()->productId);

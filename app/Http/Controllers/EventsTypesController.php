@@ -7,6 +7,7 @@ use App\Http\Requests\CreateEventTypeRequest;
 use App\Http\Requests\UpdateEventTypeRequest;
 use App\Services\EventService;
 use App\Http\Resources\CustomResource;
+use Exception;
 
 class EventsTypesController extends Controller
 {
@@ -28,7 +29,7 @@ class EventsTypesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(CreateEventTypeRequest $request,EventService $es)
-    {
+    {   
         $input=$request->validated();
         $es->createEvent($input);
         return "Event created"; 
@@ -42,8 +43,8 @@ class EventsTypesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id,EventService $es)
-    {   
+    public function show($id,Request $request,EventService $es)
+    {       
         $base_id= $request->input('base_id');
         $result=$es->getEvents($base_id,$id);
         return new CustomResource((array) $result);
