@@ -32,6 +32,6 @@ Route::delete('/event/{id}', [EventsTypesController::class, 'destroy']);
 Route::post('/logevent/{eventTypeId}', [EventLogController::class, 'create']);
 Route::post('/logevent/filter/{baseId}', [EventLogController::class, 'filter']);
 
-Route::post('/productcatalog/{baseId}', [productCatalogController::class, 'create']);
-Route::get('/productcatalog/{productId}', [productCatalogController::class, 'index']);
+Route::post('/product/{baseId}', [productCatalogController::class, 'create']);
+Route::get('/product/{productId}', [productCatalogController::class, 'index']);
 

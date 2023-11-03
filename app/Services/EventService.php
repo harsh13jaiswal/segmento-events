@@ -6,6 +6,7 @@ use App\Libs\BigqueryLib;
 use Exception;
 
 class EventService{
+    protected $lib;
     public function __construct(BigqueryLib $lib) {
         $this->lib = $lib;
     }
@@ -24,10 +25,6 @@ class EventService{
         VALUES
         ('$identifier', '$base_id', '$type', '$event_name', TIMESTAMP '$created_at', JSON'$event_properties')";
         $this->lib->runQuery($query);
-    }
-
-    public function UpdateEvent($input){
-
     }
 
     public function getEvents($base_id,$id=null){
