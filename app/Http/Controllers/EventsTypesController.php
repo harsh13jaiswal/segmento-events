@@ -67,9 +67,10 @@ class EventsTypesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id,EventService $es)
-    {
-        $result=$es->deleteEvents(1,$id);
+    public function destroy($id,EventService $es,Request $request)
+    {   
+        $baseId=$request->baseId;
+        $result=$es->deleteEvents($baseId,$id);
         return new CustomResource((array) [$result]);
     }
 }

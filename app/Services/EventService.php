@@ -36,9 +36,9 @@ class EventService{
         return $this->lib->runQuery($query);
     }
 
-    public function deleteEvents($companyId,$id){
-        $query="delete from via-socket-prod.segmento.event_types
-        WHERE company_id = '$companyId' AND identifier ='$id'";
+    public function deleteEvents($baseId,$id){
+        $query="DELETE FROM via-socket-prod.segmento.event_types
+        WHERE base_id = '$baseId' AND identifier ='$id'";
         try{
             $this->lib->runQuery($query);
         }catch(Exception $e){
