@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Requests\CreateEventTypeRequest;
 use App\Http\Requests\UpdateEventTypeRequest;
 use App\Services\EventService;
+use App\Services\EventTypeService;
+
 use App\Http\Resources\CustomResource;
 use Exception;
 
@@ -16,10 +18,10 @@ class EventsTypesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, EventService $es )
+    public function index(Request $request, EventTypeService $ets)
     {
-        $base_id= $request->input('base_id');
-        $result=$es->getEvents($base_id,null);
+        $baseId=$request->baseId;
+        $result=$ets->getEventTypes($baseId,null);
         return new CustomResource((array) $result);
     }
 
@@ -28,13 +30,10 @@ class EventsTypesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(CreateEventTypeRequest $request,EventService $es)
+    public function create(CreateEventTypeRequest $request,EventTypeService $ets)
     {   
         $input=$request->validated();
-        
-
-
-        $es->createEvent($input);
+        $ets->createEventType($input);
         return "Event Type created"; 
     }
 
@@ -46,10 +45,11 @@ class EventsTypesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id,Request $request,EventService $es)
-    {       
-        $base_id= $request->input('base_id');
-        $result=$es->getEvents($base_id,$id);
+    public function show($id,Request $request,EventTypeService $ets)
+    {           
+        $baseId=$request->baseId;
+        $id=$request->id;
+        $result=$ets->getEventTypes($baseId,$id);
         return new CustomResource((array) $result);
     }
 
@@ -60,7 +60,7 @@ class EventsTypesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateEventTypeRequest $request, $id)
+    public function update(UpdateEventTypeRequest $request)
     {
         //
     }
@@ -71,10 +71,11 @@ class EventsTypesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id,EventService $es,Request $request)
+    public function destroy(Request $request,EventTypeService $ets)
     {   
         $baseId=$request->baseId;
-        $result=$es->deleteEvents($baseId,$id);
+        $id=$request->id;
+        $result=$ets->deleteEventType($baseId,$id);
         return new CustomResource((array) [$result]);
     }
 }
