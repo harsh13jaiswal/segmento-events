@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Requests\CreateEventTypeRequest;
 use App\Http\Requests\UpdateEventTypeRequest;
-use App\Services\EventService;
 use App\Services\EventTypeService;
 
 use App\Http\Resources\CustomResource;
