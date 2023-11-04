@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EventsTypesController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\productCatalogController;
+use App\Http\Controllers\ProductCatalogController;
 use App\Http\Controllers\testingController;
 
 /*
@@ -23,16 +23,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post('/event', [EventsTypesController::class, 'create']);
-Route::get('/event', [EventsTypesController::class, 'index']);
-Route::get('/event/{id}', [EventsTypesController::class, 'show']);
-Route::patch('/event/{id}', [EventsTypesController::class, 'update']);
-Route::delete('/event/{id}', [EventsTypesController::class, 'destroy']);
+Route::post('/event', [EventsTypesController::class, 'create']); //done
+Route::get('/event', [EventsTypesController::class, 'index']);   //done
+Route::get('/event/{id}', [EventsTypesController::class, 'show']); //done
+Route::delete('/event/{id}', [EventsTypesController::class, 'destroy']);//done
 
-Route::post('/logevent', [EventController::class, 'create']);
-Route::post('/logevent/filter/{baseId}', [EventController::class, 'filter']);
+Route::post('/logevent', [EventController::class, 'create']);   //done
+Route::post('/logevent/filter', [EventController::class, 'filter']);//done
 
-Route::post('/product/{baseId}', [productCatalogController::class, 'create']);
-Route::get('/product/{productId}', [productCatalogController::class, 'index']);
+Route::post('/product/{base_id}', [ProductCatalogController::class, 'create']); //done
+Route::get('/product/{product_id}', [ProductCatalogController::class, 'index']);//done
 
 Route::get('/test', [testingController::class, 'index']);

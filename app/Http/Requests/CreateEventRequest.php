@@ -31,6 +31,7 @@ class CreateEventRequest extends FormRequest
             'user_id'=>'nullable|string',
             'event_name'=>"nullable|string",
             'event_timestamp'=>"required|string",
+            'base_id'=>"required|string",
         ];
        
         // , created_at, context, page, original_timestamp, sent_at, received_at, event_properties FROM `via-socket-prod.segmento.user_events` LIMIT 1000
