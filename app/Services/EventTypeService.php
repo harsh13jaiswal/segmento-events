@@ -50,15 +50,15 @@ class EventTypeService
         }
     }
 
-    public function deleteEventType($baseId, $id)
+    public function deleteEventType($base_id, $id)
     {
-        $query = "DELETE FROM via-socket-prod.segmento.event_types WHERE BASE_ID = '$baseId' AND identifier ='$id'";
+        $query = "DELETE FROM via-socket-prod.segmento.event_types WHERE base_id = '$base_id' AND identifier ='$id'";
         try {
             $this->bigQueryLib->runQueryOnDB($query);
-            return "Deleted the event type";
         } catch (Exception $e) {
             return "Error in deleteEventType(): " . $e->getMessage();
         }
+        return "Deleted the event type";
     }
 
     public function searchEventType($base_id, $type, $event_name)
