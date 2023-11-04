@@ -29,11 +29,11 @@ class ProductCatalogService{
         $this->bigQueryLib->runQueryOnDB($query);
     }
 
-    function getProductCatalog($baseId,$productId=null){
-        if(empty($productId)) {
-            $query = "SELECT * FROM `via-socket-prod.segmento.product_catalogue` WHERE base_id='$baseId' LIMIT 100;";
+    function getProductCatalog($base_id,$product_id=null){
+        if(empty($product_id)) {
+            $query = "SELECT * FROM `via-socket-prod.segmento.product_catalogue` WHERE base_id='$base_id' LIMIT 100;";
         } else {
-            $query = "SELECT * FROM `via-socket-prod.segmento.product_catalogue` WHERE product_id='$productId' AND base_id='$baseId';";
+            $query = "SELECT * FROM `via-socket-prod.segmento.product_catalogue` WHERE product_id='$product_id' AND base_id='$base_id';";
         }
         
         return $this->bigQueryLib->runQueryOnDB($query);

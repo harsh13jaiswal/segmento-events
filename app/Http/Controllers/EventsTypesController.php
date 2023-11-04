@@ -19,8 +19,8 @@ class EventsTypesController extends Controller
      */
     public function index(Request $request, EventTypeService $ets)
     {
-        $baseId=$request->baseId;
-        $result=$ets->getEventTypes($baseId,null);
+        $base_id=$request->base_id;
+        $result=$ets->getEventTypes($base_id,null);
         return new CustomResource((array) $result);
     }
 
@@ -46,9 +46,9 @@ class EventsTypesController extends Controller
      */
     public function show($id,Request $request,EventTypeService $ets)
     {           
-        $baseId=$request->baseId;
+        $base_id=$request->base_id;
         $id=$request->id;
-        $result=$ets->getEventTypes($baseId,$id);
+        $result=$ets->getEventTypes($base_id,$id);
         return new CustomResource((array) $result);
     }
 
@@ -72,9 +72,9 @@ class EventsTypesController extends Controller
      */
     public function destroy(Request $request,EventTypeService $ets)
     {   
-        $baseId=$request->baseId;
+        $base_id=$request->base_id;
         $id=$request->id;
-        $result=$ets->deleteEventType($baseId,$id);
+        $result=$ets->deleteEventType($base_id,$id);
         return new CustomResource((array) [$result]);
     }
 }

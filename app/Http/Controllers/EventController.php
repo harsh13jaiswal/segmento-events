@@ -89,9 +89,9 @@ class EventController extends Controller
     }
 
 
-    public function filter($baseId,FilterEventRequest $request , EventService $es){
+    public function filter(FilterEventRequest $request , EventService $es){
         $input=$request->validated();
-        $result=$es->filterEvents($baseId,$input['query']);
+        $result=$es->filterEvents($input['query']);
         return new CustomResource((array) $result);
     }
 }

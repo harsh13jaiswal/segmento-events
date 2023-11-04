@@ -26,7 +26,9 @@ class AddProductCatalogRequest extends FormRequest
         // $updated_at = $input['updated_at'];
         return [
             'product_details'=>'required|array',
-            'product_id'=>'required|string'
+            'product_id'=>'required|string',
+            'base_id'=>'required|string'
+
         ];
     }
 
@@ -35,7 +37,6 @@ class AddProductCatalogRequest extends FormRequest
         $input=parent::validated();
 
         $input['identifier']=substr(Str::uuid()->toString(), -10);
-        $input['base_id']=request()->baseId;
         $input['created_at']=date('Y-m-d H:i:s');
         $input['product_details']=json_encode($input['product_details']);
         return $input;  

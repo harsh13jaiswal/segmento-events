@@ -71,7 +71,7 @@ class EventService{
         $this->bigQueryLib->runQueryOnDB($query);
     }
 
-    public function filterEvents($baseId,$query){
+    public function filterEvents($query){
         return $this->bigQueryLib->runQueryOnDB($query);
     }
 

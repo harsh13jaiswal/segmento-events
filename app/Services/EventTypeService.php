@@ -39,7 +39,7 @@ class EventTypeService
 
     public function getEventTypes($base_id, $id = null)
     {
-        $query = "SELECT * FROM via-socket-prod.segmento.event_types WHERE BASE_ID='$base_id' ";
+        $query = "SELECT * FROM via-socket-prod.segmento.event_types WHERE base_id='$base_id' ";
         if ($id) {
             $query .= " AND identifier='$id'";
         }

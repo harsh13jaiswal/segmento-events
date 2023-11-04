@@ -7,17 +7,17 @@ use App\Services\ProductCatalogService;
 use Illuminate\Http\Request;
 use App\Http\Resources\CustomResource;
 use Exception;
-class productCatalogController extends Controller
+class ProductCatalogController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index($request,$productId,ProductCatalogService $ps)
+    public function index($base_id,Request $request,ProductCatalogService $ps)
     {   
-        $baseId=$request->input('base_id');
-        $result=$ps->getProductCatalog($baseId,request()->productId);
+        $product_id=$request->input('product_id');
+        $result=$ps->getProductCatalog($base_id,$product_id);
         return new CustomResource((array) $result);
     }
 
