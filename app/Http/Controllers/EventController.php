@@ -7,6 +7,7 @@ use App\Http\Requests\FilterEventRequest;
 use Illuminate\Http\Request;
 use App\Services\EventService;
 use App\Http\Resources\CustomResource;
+use App\Libs\RabbitMQLib;
 use Exception;
 class EventController extends Controller
 {
@@ -25,11 +26,9 @@ class EventController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(CreateEventRequest $request,EventService $es)
+    public function create()
     {
-        $input=$request->validated();
-        $es->createEvent($input);
-        return 'Event Created';
+        //
     }
 
     /**
@@ -38,9 +37,13 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request,EventService $es)
     {
-        //
+        // $input=$request->validated();
+        $input = $request->input();
+        $lib = new RabbitMQLib(env('RABBITMQ_HOST'), env('RABBITMQ_PORT'), env('RABBITMQ_USER'), env('RABBITMQ_PASSWORD'), env('RABBITMQ_VHOST'));
+        $lib->enqueue('event_logs_queue', $input);
+        return 'Event Created';
     }
 
     /**

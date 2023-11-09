@@ -23,12 +23,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 
-Route::post('/event', [EventsTypesController::class, 'create']); //done
-Route::get('/event', [EventsTypesController::class, 'index']);   //done
-Route::get('/event/{id}', [EventsTypesController::class, 'show']); //done
-Route::delete('/event/{id}', [EventsTypesController::class, 'destroy']);//done
+Route::resource('/event', EventsTypesController::class);
 
-Route::post('/logevent', [EventController::class, 'create']);   //done
+Route::post('/logevent', [EventController::class, 'store']);   //done
 Route::post('/logevent/filter', [EventController::class, 'filter']);//done
 
 Route::post('/product/{base_id}', [ProductCatalogController::class, 'create']); //done
