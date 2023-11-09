@@ -5,13 +5,14 @@
     "keywords": ["framework", "laravel"],
     "license": "MIT",
     "require": {
+        "php": "^8.0.2",
         "google/cloud": "^0.224.0",
         "google/cloud-bigquery": "*",
-        "php": "^8.0.2",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
-        "laravel/tinker": "^2.7"
+        "laravel/tinker": "^2.7",
+        "php-amqplib/php-amqplib": "^3.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
