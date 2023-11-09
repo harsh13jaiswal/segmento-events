@@ -2,7 +2,7 @@
 
 namespace App\Libs;
 
-use App\Services\EventLogsService;
+use App\Services\EventService;
 use PhpAmqpLib\Connection\AMQPSSLConnection;
 use PhpAmqpLib\Connection\AMQPStreamConnection;
 use PhpAmqpLib\Message\AMQPMessage;
@@ -25,7 +25,7 @@ class RabbitMQLib {
     public function enqueue($queue, $data) {
         $this->channel->queue_declare($queue, false, true, false, false);
         $msg = new AMQPMessage(json_encode($data));
-        $this->channel->basic_publish($msg, '',$queue);
+        $this->channel->basic_publish($msg, '', $queue);
     }
     public function dequeue($queue, $batchSize) {
         try {
@@ -48,7 +48,7 @@ class RabbitMQLib {
 
                     // If we have processed all messages in the prefetch, acknowledge them
                     if (count($eventLogs) == $batchSize) {
-                        $service = new EventLogsService();
+                        $service = new EventService();
                         $service->executeEventLogJob($eventLogs);
 
                         foreach ($deliveryTags as $tag) {

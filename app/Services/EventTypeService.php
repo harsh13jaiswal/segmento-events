@@ -9,9 +9,9 @@ use Illuminate\Support\Str;
 class EventTypeService
 {
     protected $bigQueryLib;
-    public function __construct(BigqueryLib $bigQueryLib)
+    public function __construct()
     {
-        $this->bigQueryLib = $bigQueryLib;
+        $this->bigQueryLib = new BigqueryLib();
     }
 
     public function createEventType($input)

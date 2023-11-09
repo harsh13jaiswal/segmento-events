@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Services\EventLogsService;
+use App\Services\EventService;
 use Illuminate\Console\Command;
 
 class RabbitMQDequeueCommand extends Command
@@ -28,7 +28,8 @@ class RabbitMQDequeueCommand extends Command
      */
     public function handle()
     {
-        $lib = new EventLogsService();
+        $lib = new EventService();
+        $lib->initRabbitMQ();
         $lib->dequeue('event_logs_queue');
     }
 }

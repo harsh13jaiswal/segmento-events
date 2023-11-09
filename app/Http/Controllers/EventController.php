@@ -37,12 +37,13 @@ class EventController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request,EventService $es)
+    public function store(Request $request)
     {
-        // $input=$request->validated();
-        $input = $request->input();
+        $data = $request->data;
         $lib = new RabbitMQLib(env('RABBITMQ_HOST'), env('RABBITMQ_PORT'), env('RABBITMQ_USER'), env('RABBITMQ_PASSWORD'), env('RABBITMQ_VHOST'));
-        $lib->enqueue('event_logs_queue', $input);
+        foreach ($data as $userEvent) {
+            $lib->enqueue('event_logs_queue', $userEvent);
+        }
         return 'Event Created';
     }
 
