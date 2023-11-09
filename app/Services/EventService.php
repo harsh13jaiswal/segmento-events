@@ -11,7 +11,7 @@ class EventService{
     protected $eventTypeService;
     public function __construct(BigqueryLib $bigQueryLib,EventTypeService $eventTypeService) {
         $this->bigQueryLib = $bigQueryLib;
-        $this->eventTypeService = $eventTypeService;
+        $this->eventTypeService = $eventTypeService;     
     }
 
     public function getEvents($base_id,$id=null){
@@ -75,4 +75,29 @@ class EventService{
         return $this->bigQueryLib->runQueryOnDB($query);
     }
 
+    public function generateBulkInsertQuery($data) {
+        $table="via-socket-prod.segmento.user_events";
+        $query = "INSERT INTO $table 
+        ( `identifier`,`user_id`,`base_id`, `event_name`, `type`, `created_at`, `context`, `page`, `event_timestamp`, `event_properties`) 
+        VALUES ";
+        $valueStrings = [];
+        foreach ($data as $row) {
+            $identifier=$row['identifier'];
+            $base_id = $row['base_id'];
+            $user_id = $row['user_id'];
+            $event_name = $row['event_name'];
+            $type = $row['type'];
+            $created_at = $row['created_at'];
+            $context = $row['context'];
+            $page = $row['page'];
+            $event_timestamp = $row['event_timestamp'];
+            $event_properties = $row['event_properties'];
+            $valueStrings[] = "('$identifier','$base_id','$user_id', '$event_name', '$type', TIMESTAMP '$created_at', JSON '$context', JSON '$page', TIMESTAMP '$event_timestamp', JSON '$event_properties')";
+        }
+
+        $query .= implode(', ', $valueStrings);
+        $this->bigQueryLib->runQueryOnDB($query);
+        return "EVENTS CREATED";
+
+    }
 }

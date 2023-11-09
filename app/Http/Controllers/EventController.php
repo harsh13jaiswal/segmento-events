@@ -28,7 +28,7 @@ class EventController extends Controller
     public function create(CreateEventRequest $request,EventService $es)
     {
         $input=$request->validated();
-        $es->createEvent($input);
+        $es->generateBulkInsertQuery($input);
         return 'Event Created';
     }
 

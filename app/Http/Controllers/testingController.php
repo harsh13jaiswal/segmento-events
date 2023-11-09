@@ -1,29 +1,71 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Support\Facades\Storage;
 use Google\Cloud\BigQuery\BigQueryClient;
 
 use Illuminate\Http\Request;
 
-class testingController extends Controller
-{
-    public function index(){
-        
-            $credentials=Storage::get('key/auth.json');
-            $credentials=[
-            "type"=> "service_account",
-            "project_id"=> "via-socket-prod",
-            "private_key_id"=> "46b0e0fc558e35db7c069acee6b05b0d224e1fd9",
-            "private_key"=> "-----BEGIN PRIVATE KEY-----\nMIIEuwIBADANBgkqhkiG9w0BAQEFAASCBKUwggShAgEAAoIBAQC3y+CA24gQ8KnO\nHSxVb5OOUJ60Dq/XmQddAcJeJQVXMzkODZydOpl1SRFruII4InX9x7JEuXZD82NU\nK3t36ZWULyzcqTXAzASQOdzoJDmJH/8qSY2bI6iYvRhwnXxrKzjVQOmcUA+wh2Qc\n1nAtOJi8wKXcRiLrFhXrLE06jwopB0WXEP4YX6Ry6hZ6iAo+MyLmCFJB6ZlOwNTL\nul4B8kNZ1AhIIcCD4EJYQZbw985oMigEdI33Se6lOfpVl0oKCKKKUtJak/aT3B2a\nEy9cuwEO6uDrti7kpid/IDvDhnBoNDQHgsOQjaU1ZEaQUijw1x/UqKSpkb31N5u/\nMVY4ll7lAgMBAAECgf9cyCSGl5SC4ilgrieJWiwuJe08+BATVxzhRb51Gjf7yeZS\nWg8mUZOtessJsvxDkOfyjUo7sUcUMdmYg7NfwE3L1crJZk5W65HsojqoMTCGkvkB\nJFPaNy4W7lmOufgOi+0C8qzxyxGzDTbOuix3n4Zi+vcwVSxQPoI3h/IsFK2NKZs4\nsepRvCTcuRzz/mrEq4xwHnu8Zsn6gRDD7Cli8T07lRXDTrAIz+03pLPhhIZzfy6F\ndTwXN1V8TaG2FCm6Su8kEGVa6cRpA2NgED4vSp7lcwpvQulZFTDD0oKD8sE8Nps2\n0NmAhjGYVD+tc8KKfRQBznCXzMWsqr/7cTdB41ECgYEA/IajT3Cocp40jCgTHN2O\nEBQnlt2fX4no4Ui/cZAo0B5Ef25fvP9zWcxmNy0XW725nyu0rNSagSIH4BZn1xJT\njobkFvUbdrNLKL8fUVTR71V/WzxithJVSeerMyEk1DJ+lhA0WARDv7M9lb3DfHdS\nvWWA1NQN/LiJCXpkpuFtK0MCgYEAulMu1OMp0X0tKs7LPhHronDPiHL1I8+8vdd8\nZryehiv6xaAFC7LD/yM1gj8BSB5969tellsaETlpbF7OS+6Oly27snSX/UF34/B4\nlebx/ST5QHIBEfO3YUg1FmRzk2/RPYY0lEfvZtEstMvMlhAMY9HLgVNx82PkMyTy\nxv8VprcCgYBXNoCsbPIgM7deOHDxZSstLmjF1+C09EIznBZSOEGALxPlFs+FzIug\nFdGveKk6i/nRmRybHAoIUyJ5KAPQ6YlmDfw0WY6UnjN07Rz5z9t5VwPXFLHaw9Yk\n4hfkXqwDhTTmys3pH//t8w9v6cvb7rHqq2WlG1+BSpI5bcXZRL2ZVQKBgQCbuxrR\nZGx3Y6B0vxKwdln0E0XiTfMGU4L1ST34wH3etrOKqgyNkoSuosb+bZqspI+qqleM\nY+iNrOaoZTUX0fPr95WBumGukyGZqkufPr/TTSvm6WJrlsAW1ztH0/2lpTfFrH4V\n0WoPDZXIJu6AHjm81IS7Ovtq6nq5JJCmMl3uUQKBgChjAzRzxACjDwLbFxIwtfJ+\nh8TWoyLMvWIEbRdhsf+4UsBWtcund6GcSNxGBXu05kk43wxH/MkVB0s9/2lbTNhg\npWSdr8V1LlTxWMAivJmMn+Bjp0y2lFr6ptDEiqEAF/lsf7lICc4hZjqy4WB9TWQv\nqB+JdNIgV+mnnZoyeO8C\n-----END PRIVATE KEY-----\n",
-            "client_email"=> "big-query@via-socket-prod.iam.gserviceaccount.com",
-            "client_id"=> "105985983879219923000",
-            "auth_uri"=> "https://accounts.google.com/o/oauth2/auth",
-            "token_uri"=> "https://oauth2.googleapis.com/token",
-            "auth_provider_x509_cert_url"=> "https://www.googleapis.com/oauth2/v1/certs",
-            "client_x509_cert_url"=> "https://www.googleapis.com/robot/v1/metadata/x509/big-query%40via-socket-prod.iam.gserviceaccount.com",
-            "universe_domain"=> "googleapis.com"
+class testingController extends Controller {
+    public function index() {
+        $table = "via-socket-prod.segmento.user_events";
+        // Temporary data
+        $data = [
+            [
+                'identifier'=>'859',
+                'base_id' => '123',
+                'user_id'=>'852',
+                'event_name' => 'event1',
+                'type' => 'type1',
+                'created_at' => '2023-11-09 12:00:00',
+                'context' => ['data1' => 'value1', 'data2' => 'value2'],
+                'page' => ['data3' => 'value3', 'data4' => 'value4'],
+                'event_timestamp' => '2023-11-09 12:00:00',
+                'event_properties' => ['data5' => 'value5', 'data6' => 'value6']
+            ],
+            [   
+                'identifier'=>'8569',
+                'base_id' => '456',
+                'user_id'=>'852',
+                'event_name' => 'event2',
+                'type' => 'type2',
+                'created_at' => '2023-11-10 12:00:00',
+                'context' => ['data1' => 'value1', 'data2' => 'value2'],
+                'page' => ['data3' => 'value3', 'data4' => 'value4'],
+                'event_timestamp' => '2023-11-10 12:00:00',
+                'event_properties' => ['data5' => 'value5', 'data6' => 'value6']
+            ]
         ];
-        $testRun = new BigQueryClient(["keyFile" => $credentials, "projectId" => "via-socket-prod"]);
+
+        $insertQuery = $this->generateBulkInsertQuery($table, $data);
+
+        dd($insertQuery);
+    }
+
+    public function generateBulkInsertQuery($table, $data) {
+        $query = "INSERT INTO $table 
+        ( `identifier`,`user_id`,`base_id`, `event_name`, `type`, `created_at`, `context`, `page`, `event_timestamp`, `event_properties`) 
+        VALUES ";
+
+        $valueStrings = [];
+        foreach ($data as $row) {
+            $identifier=$row['identifier'];
+            $base_id = $row['base_id'];
+            $user_id = $row['user_id'];
+            $event_name = $row['event_name'];
+            $type = $row['type'];
+            $created_at = $row['created_at'];
+            $context = json_encode($row['context']);
+            $page = json_encode($row['page']);
+            $event_timestamp = $row['event_timestamp'];
+            $event_properties = json_encode($row['event_properties']);
+
+            $valueStrings[] = "('$identifier','$base_id','$user_id', '$event_name', '$type', TIMESTAMP '$created_at', JSON '$context', JSON '$page', TIMESTAMP '$event_timestamp', JSON '$event_properties')";
+        }
+
+        $query .= implode(', ', $valueStrings);
+
+        return $query;
     }
 }
