@@ -30,6 +30,7 @@ class RabbitMQLib {
     public function dequeue($queue, $batchSize) {
         try {
             $eventLogs = [];
+            $deliveryTags = [];
             $queueProperties = $this->channel->queue_declare($queue, false, true, false, false);
             $queueSize = $queueProperties[1];
             $this->channel->basic_qos(null, $batchSize, null);
@@ -40,17 +41,22 @@ class RabbitMQLib {
                 false,                           #no ack - send a proper acknowledgment from the worker, once we're done with a task
                 false,                          #exclusive - queues may only be accessed by the current connection
                 false,                          #no wait - TRUE: the server will not respond to the method. The client should not wait for a reply method
-                function($message) use (&$eventLogs, $batchSize) {
+                function($message) use (&$eventLogs, &$deliveryTags, $batchSize) {
                     $decodedMsg = json_decode($message->body, true);
                     $eventLogs[] = $decodedMsg;
+                    $deliveryTags[] = $message->delivery_info['delivery_tag'];
 
                     // If we have processed all messages in the prefetch, acknowledge them
-                    if (sizeof($eventLogs) == $batchSize) {
+                    if (count($eventLogs) == $batchSize) {
                         $service = new EventLogsService();
                         $service->executeEventLogJob($eventLogs);
 
-                        $message->delivery_info['channel']->basic_ack($message->delivery_info['delivery_tag']);
-                        unset($eventLogs);
+                        foreach ($deliveryTags as $tag) {
+                            $message->delivery_info['channel']->basic_ack($tag);
+                        }
+                        
+                        $deliveryTags = [];
+                        $eventLogs = [];
                     }
                 }   #callback - method that will receive the message
             );

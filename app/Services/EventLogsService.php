@@ -15,7 +15,7 @@ class EventLogsService{
     }
 
     public function dequeue($queue){
-        $this->lib->dequeue($queue, 4);
+        $this->lib->dequeue($queue, env('RABBITMQ_BATCH_COUNT'));
         return true;
     }
 
