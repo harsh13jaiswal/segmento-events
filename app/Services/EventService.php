@@ -6,6 +6,7 @@ use App\Libs\BigqueryLib;
 use App\Libs\RabbitMQLib;
 use Exception;
 use App\Services\EventTypeService;
+use Illuminate\Support\Facades\Validator;
 
 class EventService{
     protected $rabbitMQLib;
@@ -87,6 +88,7 @@ class EventService{
     }
 
     public function executeEventLogJob($data){
+        $data=$this->bulkValidateEvents($data);
         $query = $this->generateBulkEventInsertQuery($data);
         $this->bigQueryLib->runQueryOnDB($query);
     }
@@ -104,10 +106,10 @@ class EventService{
             $user_id = $row['user_id'];
             $event_name = $row['event_name'];
             $type = $row['type'];
+            $event_timestamp = $row['event_timestamp'];
             $created_at = date('Y-m-d H:i:s');
             $context = json_encode($row['context']);
             $page = json_encode($row['page']);
-            $event_timestamp = $row['event_timestamp'];
             $event_properties = json_encode($row['event_properties']);
 
             $valueStrings[] = "('$identifier','$base_id','$user_id', '$event_name', '$type', TIMESTAMP '$created_at', JSON '$context', JSON '$page', TIMESTAMP '$event_timestamp', JSON '$event_properties')";
@@ -116,5 +118,22 @@ class EventService{
         $query .= implode(', ', $valueStrings);
 
         return $query;
+    }
+
+    public function bulkValidateEvents($data){  
+        $validatedData = collect($data)->reject(function ($item) {
+            $validator = Validator::make($item, [
+                'type' => 'required|string|in:track,identify,page',
+                'event_properties' => 'required|array',
+                'context' => 'required|array',
+                'page' => 'required|array',
+                'user_id' => 'nullable|string',
+                'event_name' => 'nullable|string',                          //need to apply the event_name validation using cache 
+                'event_timestamp' =>'required|date_format:Y-m-d H:i:s',
+                'base_id' => 'required|string',                             //need to apply the base_id validation from the db side
+            ]);
+            return $validator->fails();
+        })->toArray();
+        return $validatedData;
     }
 }
