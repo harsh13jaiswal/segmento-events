@@ -9,6 +9,7 @@ use App\Services\EventService;
 use App\Http\Resources\CustomResource;
 use App\Libs\RabbitMQLib;
 use Exception;
+
 class EventController extends Controller
 {
     /**
@@ -92,10 +93,78 @@ class EventController extends Controller
 
     }
 
+    public function filter(FilterEventRequest $request, EventService $es)
+    {
+        $input = $request->validated();
+        $authorization = env('OPEN_AI_TOKEN');
+        $englishQuery = $request->input('query');
+        // Set API endpoint
+        $host = 'https://api.openai.com/v1';
+        $operation = '/chat/completions?=null';
+        $endpoint = $host . $operation;
+        $schema = " 'identifier' (STRING), 'base_id' (STRING), 'user_id' (STRING), 'event_name' (STRING), 'type' (STRING), 'context' (JSON), 'page' (JSON), 'event_timestamp' (TIMESTAMP), event_properties (JSON), and 'created_at' (TIMESTAMP).";
+        $tablename = 'via-socket-prod.segmento.user_events';
+        $base_id="1";
+        $sampleEvent = "
+            'type' => 'track',
+            'event_properties' => ['productID' => '11'],
+            'context' => ['a' => 'asldkjf'],
+            'page' => ['a' => 'asldkjf'],
+            'user_id' => '1212',
+            'event_name' => 'product-purchase',
+            'event_timestamp' => '2023-11-16 08:30:00',
+            'base_id' => '123123'";
+        // Instructions for generating BigQuery-compatible SQL
+        $input = [
+            "model" => "gpt-4-1106-preview",
+            "messages" => [
+                [
+                    "role" => "system",
+                    "content" => "Create SQL queries for Google BigQuery. Focus on correct use of date and timestamp functions. Remember that BigQuery does not support 'MONTH' date part with TIMESTAMP type in TIMESTAMP_SUB. Instead, use DATE_SUB with a DATE type, then convert to TIMESTAMP if needed. The table schema includes: " . $schema . "
+                          Sample event JSON: " . $sampleEvent . "
+                          Use tablename: " . $tablename . "
+                          For JSON parsing, use JSON_EXTRACT_SCALAR correctly.
+                          Output format: {'query':'your result',countQuery:'result'}
+                          Set a minimum record limit of 5 for each query.
+                          English query: " . $englishQuery . "
+                          countQuery: It will contain count(*) as count for same english query without limit condition.
+                          also add where base_id :".$base_id."
+                          Key instructions:
+                          1. Adhere strictly to BigQuery functions and syntax.
+                          2. Use DATE_SUB for date manipulations and convert to TIMESTAMP if necessary.
+                          3. Test for compatibility with Google BigQuery"
+                ],
+            ],
+            "response_format" => [
+                "type" => "json_object"
+            ]
+        ];
+    
+       
+        // Convert data to JSON
+        $dataString = json_encode($input);
+        // Initialize cURL session
+        $ch = curl_init();
+        // Set cURL options
+        curl_setopt($ch, CURLOPT_URL, $endpoint);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
+        // Set headers
+        $headers = [
+            'Content-Type: application/json',
+            'Authorization: ' . $authorization,
+        ];
 
-    public function filter(FilterEventRequest $request , EventService $es){
-        $input=$request->validated();
-        $result=$es->filterEvents($input['query']);
-        return new CustomResource((array) $result);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $result = json_decode(curl_exec($ch));
+        $result=json_decode($result->choices[0]->message->content);
+        // dd($result->query,$result->countQuery);
+        $records = $es->filterEvents($result->query);
+        $resultCount = $es->filterEvents($result->countQuery);
+
+
+        return new CustomResource((array) [$records,$resultCount]);
     }
 }
