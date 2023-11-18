@@ -28,7 +28,7 @@ Route::resource('/event', EventsTypesController::class);
 Route::post('/logevent', [EventController::class, 'store']);   //done
 Route::post('/logevent/filter', [EventController::class, 'filter']);//done
 
-Route::post('/product/{base_id}', [ProductCatalogController::class, 'create']); //done
+Route::post('/product', [ProductCatalogController::class, 'store']); //done
 Route::get('/product/{product_id}', [ProductCatalogController::class, 'index']);//done
 
 Route::get('/test', [testingController::class, 'index']);
