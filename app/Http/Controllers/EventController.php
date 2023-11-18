@@ -9,6 +9,7 @@ use App\Services\EventService;
 use App\Http\Resources\CustomResource;
 use App\Libs\RabbitMQLib;
 use Exception;
+use Ixudra\Curl\Facades\Curl;
 
 class EventController extends Controller
 {
@@ -97,14 +98,16 @@ class EventController extends Controller
     {
         $input = $request->validated();
         $authorization = env('OPEN_AI_TOKEN');
-        $englishQuery = $request->input('query');
-        // Set API endpoint
-        $host = 'https://api.openai.com/v1';
+        $host = env('OPEN_AI_HOST');
+        $englishQuery = $input['query'];
+        
         $operation = '/chat/completions?=null';
         $endpoint = $host . $operation;
+
         $schema = " 'identifier' (STRING), 'base_id' (STRING), 'user_id' (STRING), 'event_name' (STRING), 'type' (STRING), 'context' (JSON), 'page' (JSON), 'event_timestamp' (TIMESTAMP), event_properties (JSON), and 'created_at' (TIMESTAMP).";
         $tablename = 'via-socket-prod.segmento.user_events';
         $base_id="1";
+
         $sampleEvent = "
             'type' => 'track',
             'event_properties' => ['productID' => '11'],
@@ -114,6 +117,8 @@ class EventController extends Controller
             'event_name' => 'product-purchase',
             'event_timestamp' => '2023-11-16 08:30:00',
             'base_id' => '123123'";
+      
+        
         // Instructions for generating BigQuery-compatible SQL
         $input = [
             "model" => "gpt-4-1106-preview",
@@ -140,27 +145,29 @@ class EventController extends Controller
             ]
         ];
     
-       
-        // Convert data to JSON
-        $dataString = json_encode($input);
-        // Initialize cURL session
-        $ch = curl_init();
-        // Set cURL options
-        curl_setopt($ch, CURLOPT_URL, $endpoint);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
-        // Set headers
         $headers = [
             'Content-Type: application/json',
             'Authorization: ' . $authorization,
         ];
 
+        $result = Curl::to($endpoint)
+        ->withData($input)
+        ->withHeaders($headers)
+        ->asJson()
+        ->post();
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        $result = json_decode(curl_exec($ch));
+        // Check if the request was successful
+        if (!$result) {
+            Log::error('Curl request failed', [
+                'endpoint' => $endpoint,
+                'input' => $input,
+                'headers' => $headers
+            ]);
+        }
+
+    
+    
         $result=json_decode($result->choices[0]->message->content);
-        // dd($result->query,$result->countQuery);
         $records = $es->filterEvents($result->query);
         $resultCount = $es->filterEvents($result->countQuery);
 
