@@ -29,11 +29,9 @@ class EventsTypesController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(CreateEventTypeRequest $request,EventTypeService $ets)
+    public function create()
     {   
-        $input=$request->validated();
-        $ets->createEventType($input);
-        return "Event Type created"; 
+
     }
 
 
@@ -70,11 +68,26 @@ class EventsTypesController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request,EventTypeService $ets)
+    public function destroy($id,Request $request,EventTypeService $ets)
     {   
         $base_id=$request->base_id;
-        $id=$request->id;
         $result=$ets->deleteEventType($base_id,$id);
         return new CustomResource((array) [$result]);
     }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(CreateEventTypeRequest $request,EventTypeService $ets)
+    {
+
+        $input=$request->validated();
+        $ets->createEventType($input);
+        return "Event Type created"; 
+        
+    }
+
 }
