@@ -155,17 +155,10 @@ class EventController extends Controller
         ->withHeaders($headers)
         ->asJson()
         ->post();
-
         // Check if the request was successful
-        if (!$result) {
-            Log::error('Curl request failed', [
-                'endpoint' => $endpoint,
-                'input' => $input,
-                'headers' => $headers
-            ]);
+        if (property_exists($result,'error')) {
+            return "Something went Wrong";
         }
-
-    
     
         $result=json_decode($result->choices[0]->message->content);
         $records = $es->filterEvents($result->query);
