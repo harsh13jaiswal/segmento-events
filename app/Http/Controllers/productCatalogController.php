@@ -26,11 +26,9 @@ class ProductCatalogController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(AddProductCatalogRequest $request ,ProductCatalogService $ps)
+    public function create()
     {   
-        $input=$request->validated();
-        $ps->addProductToCatalogue($input);
-        return 'Product Added';
+       
     }
 
     /**
@@ -39,9 +37,11 @@ class ProductCatalogController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(AddProductCatalogRequest $request ,ProductCatalogService $ps)
     {
-        //
+        $input=$request->validated();
+        $ps->addProductToCatalogue($input);
+        return 'Product Added';
     }
 
     /**
