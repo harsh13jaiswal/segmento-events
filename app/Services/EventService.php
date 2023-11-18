@@ -112,7 +112,7 @@ class EventService{
             $page = json_encode($row['page']);
             $event_properties = json_encode($row['event_properties']);
 
-            $valueStrings[] = "('$identifier','$base_id','$user_id', '$event_name', '$type', TIMESTAMP '$created_at', JSON '$context', JSON '$page', TIMESTAMP '$event_timestamp', JSON '$event_properties')";
+            $valueStrings[] = "('$identifier',  '$user_id', '$base_id', '$event_name', '$type', TIMESTAMP '$created_at', JSON '$context', JSON '$page', TIMESTAMP '$event_timestamp', JSON '$event_properties')";
         }
 
         $query .= implode(', ', $valueStrings);
@@ -127,8 +127,8 @@ class EventService{
                 'event_properties' => 'required|array',
                 'context' => 'required|array',
                 'page' => 'required|array',
-                'user_id' => 'nullable|string',
-                'event_name' => 'nullable|string',                          //need to apply the event_name validation using cache 
+                'user_id' => 'required|string',
+                'event_name' => 'required|string',                          //need to apply the event_name validation using cache 
                 'event_timestamp' =>'required|date_format:Y-m-d H:i:s',
                 'base_id' => 'required|string',                             //need to apply the base_id validation from the db side
             ]);
