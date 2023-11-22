@@ -83,13 +83,16 @@ class EventService{
     }
 
     public function dequeue($queue){
+        $this->initRabbitMQ();
         $this->rabbitMQLib->dequeue($queue, env('RABBITMQ_BATCH_COUNT'));
         return true;
     }
 
     public function executeEventLogJob($data){
-        $data=$this->bulkValidateEvents($data);
-        $query = $this->generateBulkEventInsertQuery($data);
+        $failedEvents = [];
+        $validatedEvents = [];
+        $this->bulkValidateEvents($data, $failedEvents, $validatedEvents);
+        $query = $this->generateBulkEventInsertQuery($validatedEvents);
         $this->bigQueryLib->runQueryOnDB($query);
     }
     
@@ -120,20 +123,31 @@ class EventService{
         return $query;
     }
 
-    public function bulkValidateEvents($data){  
-        $validatedData = collect($data)->reject(function ($item) {
-            $validator = Validator::make($item, [
-                'type' => 'required|string|in:track,identify,page',
-                'event_properties' => 'required|array',
-                'context' => 'required|array',
-                'page' => 'required|array',
-                'user_id' => 'required|string',
-                'event_name' => 'required|string',                          //need to apply the event_name validation using cache 
-                'event_timestamp' =>'required|date_format:Y-m-d H:i:s',
-                'base_id' => 'required|string',                             //need to apply the base_id validation from the db side
-            ]);
-            return $validator->fails();
-        })->toArray();
-        return $validatedData;
+    public function bulkValidateEvents($data, &$failedEvents, &$validatedEvents){
+        $validations = [
+            "base_id"=> "required|string",
+            "user_id"=> "required_without:anonymous_id|string",
+            "anonymous_id"=>"required_without:user_id|string",
+            "type"=> "nullable|string",
+            "context"=> "nullable|array",
+            "page"=> "nullable|array",
+            "event_timestamp"=>"nullable|date_format:Y-m-d H:i:s",
+            "event_properties"=>'required|array',
+            "event_name"=>'required|string'
+        ];
+
+        foreach($data as $item) {
+            if(!empty($data['event_name']) && in_array($data['event_name'], array_keys(config('default-event-types')))){
+                $validations += config('default-event-types.'.$data['event_name'].'.event_properties.rules');
+            }
+            $validator = Validator::make($item, $validations);
+            if($validator->fails()){
+                $failedEvents += ["event" => $item, "errors" => $validator->errors()];
+            }
+            if(!in_array($data['event_name'], array_keys(config('default-event-types')))){
+                $this->rabbitMQLib->enqueue('event_types_queue', $item);
+            }
+            $validatedEvents += $validator->validated();
+        }
     }
 }

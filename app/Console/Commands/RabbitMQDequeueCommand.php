@@ -29,7 +29,6 @@ class RabbitMQDequeueCommand extends Command
     public function handle()
     {
         $lib = new EventService();
-        $lib->initRabbitMQ();
         $lib->dequeue('event_logs_queue');
     }
 }
